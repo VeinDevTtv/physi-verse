@@ -4,6 +4,7 @@ import Link from "next/link";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { useRole } from "@/providers/RoleProvider";
+import AssistantDialog from "@/components/AssistantDialog";
 
 export function Navbar(): JSX.Element {
   const { role, setRole, clearRole } = useRole();
@@ -58,6 +59,7 @@ export function Navbar(): JSX.Element {
               Clear
             </Button>
           )}
+          <AssistantDialog />
         </div>
       </div>
     </div>

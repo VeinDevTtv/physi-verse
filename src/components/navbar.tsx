@@ -20,6 +20,13 @@ export function Navbar(): JSX.Element {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <Link href="/labs" legacyBehavior passHref>
+                <NavigationMenuLink className="px-3 py-1.5 text-sm">
+                  Labs
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link href="/about" legacyBehavior passHref>
                 <NavigationMenuLink className="px-3 py-1.5 text-sm">
                   About

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PhysicsScene } from "@/three/PhysicsScene";
 import { Switch } from "@/components/ui/switch";
+import FormulaVisualizer from "@/components/FormulaVisualizer";
 import ProjectileMotion from "@/components/ProjectileMotion";
 
 export default function Home() {
@@ -21,6 +22,9 @@ export default function Home() {
         </div>
         <div className="w-full max-w-5xl">
           <ProjectileMotion />
+        </div>
+        <div className="w-full max-w-5xl">
+          <FormulaVisualizer />
         </div>
       </main>
       <Footer />

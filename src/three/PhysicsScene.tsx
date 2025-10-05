@@ -6,10 +6,18 @@ import * as CANNON from "cannon-es"
 
 type PhysicsSceneProps = {
   enabled: boolean
+  // Mass of the cube in kilograms
+  mass?: number
+  // Constant force applied along X axis in newtons
+  force?: number
+  // Gravity along Y axis (m/s^2), negative values pull down
+  gravity?: number
+  // Called every frame with basic kinematics for plotting
+  onSample?: (sample: { t: number; x: number; v: number; a: number }) => void
   className?: string
 }
 
-export function PhysicsScene({ enabled, className }: PhysicsSceneProps) {
+export function PhysicsScene({ enabled, className, mass = 1, force = 0, gravity = -9.82, onSample }: PhysicsSceneProps) {
   const containerRef = React.useRef<HTMLDivElement | null>(null)
   const cleanupRef = React.useRef<(() => void) | null>(null)
 
@@ -60,30 +68,34 @@ export function PhysicsScene({ enabled, className }: PhysicsSceneProps) {
     scene.add(cubeMesh)
 
     // Cannon.js physics world
-    const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) })
+    const world = new CANNON.World({ gravity: new CANNON.Vec3(0, gravity, 0) })
     world.broadphase = new CANNON.NaiveBroadphase()
     world.solver.iterations = 10
 
     const groundBody = new CANNON.Body({
       mass: 0,
       shape: new CANNON.Plane(),
-      material: new CANNON.Material({ friction: 0.3, restitution: 0.2 }),
+      // Low friction for clearer F = m a demonstration
+      material: new CANNON.Material({ friction: 0.0, restitution: 0.0 }),
     })
     groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
     world.addBody(groundBody)
 
     const cubeBody = new CANNON.Body({
-      mass: enabled ? 1 : 0,
+      mass: enabled ? Math.max(0.0001, mass) : 0,
       shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-      position: new CANNON.Vec3(0, 5, 0),
-      material: new CANNON.Material({ friction: 0.4, restitution: 0.1 }),
-      linearDamping: 0.01,
-      angularDamping: 0.01,
+      // Rest on the plane by default
+      position: new CANNON.Vec3(0, 0.51, 0),
+      material: new CANNON.Material({ friction: 0.02, restitution: 0.0 }),
+      linearDamping: 0.0,
+      angularDamping: 0.0,
     })
     world.addBody(cubeBody)
 
     let animationFrameId = 0
     const clock = new THREE.Clock()
+    let elapsedTime = 0
+    let previousVx = 0
 
     function handleResize() {
       if (!container) return
@@ -97,6 +109,10 @@ export function PhysicsScene({ enabled, className }: PhysicsSceneProps) {
     function animate() {
       const delta = Math.min(clock.getDelta(), 0.033)
       if (enabled) {
+        // Apply constant force along X each step for F = m a visualization
+        if (force !== 0) {
+          cubeBody.applyForce(new CANNON.Vec3(force, 0, 0), cubeBody.position)
+        }
         world.step(1 / 60, delta, 3)
       }
 
@@ -112,6 +128,15 @@ export function PhysicsScene({ enabled, className }: PhysicsSceneProps) {
         cubeBody.quaternion.z,
         cubeBody.quaternion.w
       )
+
+      // Sampling for charts
+      if (enabled && onSample) {
+        elapsedTime += delta
+        const vx = cubeBody.velocity.x
+        const ax = (vx - previousVx) / (delta || 1 / 60)
+        previousVx = vx
+        onSample({ t: elapsedTime, x: cubeBody.position.x, v: vx, a: ax })
+      }
 
       renderer.render(scene, camera)
       animationFrameId = requestAnimationFrame(animate)
@@ -133,7 +158,7 @@ export function PhysicsScene({ enabled, className }: PhysicsSceneProps) {
       cleanupRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled])
+  }, [enabled, mass, force, gravity])
 
   return <div ref={containerRef} className={className} style={{ width: "100%", height: 480 }} />
 }

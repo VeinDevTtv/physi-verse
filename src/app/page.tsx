@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PhysicsScene } from "@/three/PhysicsScene";
 import { Switch } from "@/components/ui/switch";
+import ProjectileMotion from "@/components/ProjectileMotion";
 
 export default function Home() {
   const [enabled, setEnabled] = React.useState(true);
@@ -17,6 +18,9 @@ export default function Home() {
         </div>
         <div className="w-full max-w-5xl rounded-lg border bg-background/20 p-2">
           <PhysicsScene enabled={enabled} className="rounded-md" />
+        </div>
+        <div className="w-full max-w-5xl">
+          <ProjectileMotion />
         </div>
       </main>
       <Footer />

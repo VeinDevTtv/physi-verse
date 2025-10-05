@@ -10,7 +10,11 @@
     "dev:desktop": "cross-env NODE_ENV=development concurrently \"next dev -p 3000\" \"nodemon --watch electron --ext ts --exec \"electron -r ts-node/register/transpile-only electron/main.ts\"\"",
     "build:web": "next build",
     "build:electron": "tsc -p electron/tsconfig.json",
-    "build:desktop": "npm run build:web && npm run build:electron && electron-builder --config electron-builder.config.json"
+    "build:desktop": "npm run build:web && npm run build:electron && electron-builder --config electron-builder.config.json",
+    "build:win": "npm run build:web && npm run build:electron && electron-builder --win --config electron-builder.config.json",
+    "build:mac": "npm run build:web && npm run build:electron && electron-builder --mac --config electron-builder.config.json",
+    "build:linux": "npm run build:web && npm run build:electron && electron-builder --linux --config electron-builder.config.json",
+    "perf:win": "cross-env NEXT_PUBLIC_SHOW_PERF_HUD=1 next start -p 3000"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.14",

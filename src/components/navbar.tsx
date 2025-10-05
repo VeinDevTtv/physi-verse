@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { useRole } from "@/providers/RoleProvider";
 import AssistantDialog from "@/components/AssistantDialog";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export function Navbar(): JSX.Element {
   const { role, setRole, clearRole } = useRole();
   return (
     <div className="w-full border-b bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="text-base font-semibold">
-          PhysiVerse
+        <Link href="/" className="flex items-center gap-2 text-base font-semibold">
+          <Image src="/physiverse-logo.svg" alt="PhysiVerse" width={24} height={24} className="rounded" />
+          <span>PhysiVerse</span>
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
@@ -59,6 +62,7 @@ export function Navbar(): JSX.Element {
               Clear
             </Button>
           )}
+          <ThemeToggle />
           <AssistantDialog />
         </div>
       </div>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <!-- Simple PV monogram with orbit ring -->
+  <rect width="128" height="128" rx="24" fill="url(#g)"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(16,16)">
+    <path d="M20 64V16h20c12 0 20 6 20 16s-8 16-20 16H32v16H20zm12-28h8c6 0 10-2.8 10-8s-4-8-10-8h-8v16z" fill="white"/>
+    <path d="M72 16l20 48h-12l-3.6-9.2H63.6L60 64H48l20-48h4zm-8.8 28H76L71.2 28 63.2 44z" fill="white"/>
+    <ellipse cx="48" cy="44" rx="44" ry="20" stroke="white" stroke-opacity="0.45" stroke-width="3"/>
+  </g>
+</svg>
+

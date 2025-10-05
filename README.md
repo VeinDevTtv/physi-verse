@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is PhysiVerse — an Electron-wrapped Next.js app for interactive physics labs, quizzes, and visualizations.
 
 ## Getting Started
 
@@ -19,6 +19,45 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Desktop builds
+
+Build desktop bundles for your OS:
+
+```
+npm run build:desktop
+```
+
+Platform-specific:
+
+```
+# Windows .exe (NSIS) & portable
+npm run build:win
+
+# macOS .dmg & .zip
+npm run build:mac
+
+# Linux .AppImage, .deb, .rpm
+npm run build:linux
+```
+
+## Theming
+- Toggle dark/light from the navbar sun/moon button. Preference persists in `localStorage` under `physiverse.theme`.
+
+## Performance testing (Windows)
+- Quick FPS overlay via env flag.
+
+```
+setx NEXT_PUBLIC_SHOW_PERF_HUD 1
+npm run dev
+```
+
+For production server:
+
+```
+setx NEXT_PUBLIC_SHOW_PERF_HUD 1
+npm run build && npm start
+```
 
 ## Learn More
 

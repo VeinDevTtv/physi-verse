@@ -7,8 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PendulumLab from "@/components/labs/PendulumLab"
 import InclinedPlaneLab from "@/components/labs/InclinedPlaneLab"
 import OpticsLab from "@/components/labs/OpticsLab"
+import Link from "next/link"
+import { useRole } from "@/providers/RoleProvider"
 
 export default function LabsPage() {
+  const { role } = useRole()
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -16,6 +19,11 @@ export default function LabsPage() {
         <div className="mb-4">
           <h1 className="text-2xl font-semibold">Labs</h1>
           <p className="text-sm opacity-70">Explore pre-built physics and optics experiments.</p>
+          {role === "teacher" && (
+            <div className="mt-2">
+              <Link href="/labs/create" className="text-sm underline">Create lab</Link>
+            </div>
+          )}
         </div>
         <Tabs defaultValue="pendulum" className="w-full">
           <TabsList>

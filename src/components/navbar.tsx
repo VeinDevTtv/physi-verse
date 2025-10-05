@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { useRole } from "@/providers/RoleProvider";
 
 export function Navbar(): JSX.Element {
+  const { role, setRole, clearRole } = useRole();
   return (
     <div className="w-full border-b bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
@@ -42,6 +45,20 @@ export function Navbar(): JSX.Element {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Role:</span>
+          <Button size="sm" variant={role === "student" ? "default" : "outline"} onClick={() => setRole("student")}>
+            Student
+          </Button>
+          <Button size="sm" variant={role === "teacher" ? "default" : "outline"} onClick={() => setRole("teacher")}>
+            Teacher
+          </Button>
+          {role && (
+            <Button size="sm" variant="ghost" onClick={() => clearRole()}>
+              Clear
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

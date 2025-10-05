@@ -34,9 +34,23 @@ export function Navbar(): JSX.Element {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <Link href="/sandbox" legacyBehavior passHref>
+                <NavigationMenuLink className="px-3 py-1.5 text-sm">
+                  Sandbox
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link href="/quizzes" legacyBehavior passHref>
                 <NavigationMenuLink className="px-3 py-1.5 text-sm">
                   Quizzes
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/marketplace" legacyBehavior passHref>
+                <NavigationMenuLink className="px-3 py-1.5 text-sm">
+                  Marketplace
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>

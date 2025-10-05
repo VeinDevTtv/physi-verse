@@ -26,10 +26,12 @@ export default function ProjectileTask({ config, onResult }: Props) {
   const [angleDeg, setAngleDeg] = React.useState<number>(45)
   const [landedX, setLandedX] = React.useState<number | null>(null)
   const [playingBack, setPlayingBack] = React.useState(false)
-  const recorded = React.useRef<{ x: number; y: number }[]>([])
+  const recorded = React.useRef<{ t: number; x: number; y: number }[]>([])
+  const elapsedRef = React.useRef<number>(0)
 
   const resetAndLaunch = React.useCallback(() => {
     recorded.current = []
+    elapsedRef.current = 0
     setLandedX(null)
     const body = bodyRef.current
     const world = worldRef.current
@@ -108,7 +110,8 @@ export default function ProjectileTask({ config, onResult }: Props) {
       world.step(1 / 60, dt, 3)
       sphereMesh.position.set(sphereBody.position.x, sphereBody.position.y, sphereBody.position.z)
       if (sphereBody.position.y >= 0) {
-        recorded.current.push({ x: sphereBody.position.x, y: sphereBody.position.y })
+        elapsedRef.current += dt
+        recorded.current.push({ t: elapsedRef.current, x: sphereBody.position.x, y: sphereBody.position.y })
       } else if (landedX === null) {
         const last = recorded.current[recorded.current.length - 1]
         const lx = last ? last.x : sphereBody.position.x
@@ -162,6 +165,25 @@ export default function ProjectileTask({ config, onResult }: Props) {
         />
         <Button onClick={resetAndLaunch}>Launch</Button>
         <Button variant="secondary" onClick={replay} disabled={playingBack}>Replay</Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            const header = "time,x,y\n"
+            const rows = recorded.current.map((p) => `${p.t.toFixed(4)},${p.x.toFixed(5)},${p.y.toFixed(5)}`).join("\n")
+            const csv = header + rows
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = "simulation_trajectory.csv"
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            URL.revokeObjectURL(url)
+          }}
+        >
+          Export CSV
+        </Button>
         {landedX !== null && (
           <span className={`text-sm ${within ? "text-green-600" : "text-amber-600"}`}>
             Landed x = {landedX.toFixed(2)} (target {config.targetX})

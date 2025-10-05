@@ -39,6 +39,67 @@ export default function QuizPlayer({ quiz }: { quiz: Quiz }) {
     setFeedback((f) => ({ ...f, [q.id]: ok ? "Correct" : "Try again" }))
   }
 
+  async function downloadPdfReport() {
+    const items = quiz.questions.map((q, i) => {
+      if (q.type === "mcq") {
+        const userIdx = Number(answers[q.id])
+        return {
+          index: i,
+          prompt: q.prompt,
+          type: q.type as const,
+          correct: userIdx === q.correctIndex,
+          userAnswer: Number.isFinite(userIdx) ? String(userIdx + 1) : undefined,
+          expectedAnswer: String(q.correctIndex + 1),
+        }
+      }
+      if (q.type === "formula") {
+        const val = Number(answers[q.id])
+        const tol = q.tolerance ?? 0
+        const ok = Number.isFinite(val) && Math.abs(val - q.expectedValue) <= tol
+        return {
+          index: i,
+          prompt: q.prompt,
+          type: q.type as const,
+          correct: !!ok,
+          userAnswer: Number.isFinite(val) ? String(val) : undefined,
+          expectedAnswer: String(q.expectedValue),
+        }
+      }
+      if (q.type === "simulation") {
+        const res = answers[q.id] as { landedX: number } | undefined
+        const tol = q.tolerance ?? 0.25
+        const ok = !!res && Math.abs(res.landedX - q.targetX) <= tol
+        return {
+          index: i,
+          prompt: q.prompt,
+          type: q.type as const,
+          correct: ok,
+          userAnswer: res ? `landedX=${res.landedX.toFixed(2)}` : undefined,
+          expectedAnswer: `targetX=${q.targetX}`,
+          extra: res ? { landedX: res.landedX } : undefined,
+        }
+      }
+      return { index: i, prompt: q.prompt, type: q.type as any, correct: false }
+    })
+
+    const payload = { quizTitle: quiz.title, items }
+    const res = await fetch("/api/reports/quiz", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) return
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "quiz-report.pdf"
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-4">
       {quiz.questions.map((q, i) => (
@@ -88,6 +149,9 @@ export default function QuizPlayer({ quiz }: { quiz: Quiz }) {
           </CardContent>
         </Card>
       ))}
+      <div className="flex items-center justify-end">
+        <Button onClick={downloadPdfReport}>Download PDF Report</Button>
+      </div>
     </div>
   )
 }

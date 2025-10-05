@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
 
-type TrajectoryPoint = { x: number; y: number }
+type TrajectoryPoint = { t: number; x: number; y: number }
 
 export default function ProjectileMotion() {
   const containerRef = React.useRef<HTMLDivElement | null>(null)
@@ -27,11 +27,13 @@ export default function ProjectileMotion() {
   const [trajectory, setTrajectory] = React.useState<TrajectoryPoint[]>([])
 
   const positionsBufferRef = React.useRef<TrajectoryPoint[]>([])
+  const elapsedRef = React.useRef<number>(0)
   const frameCounterRef = React.useRef<number>(0)
 
   const resetAndLaunch = React.useCallback(() => {
     // Reset chart buffer
     positionsBufferRef.current = []
+    elapsedRef.current = 0
     setTrajectory([])
 
     const body = bodyRef.current
@@ -149,7 +151,8 @@ export default function ProjectileMotion() {
       // Collect live trajectory while y>=0
       frameCounterRef.current = (frameCounterRef.current + 1) % 2 // throttle updates ~30fps
       if (frameCounterRef.current === 0 && sphereBody.position.y >= 0) {
-        positionsBufferRef.current.push({ x: sphereBody.position.x, y: sphereBody.position.y })
+        elapsedRef.current += dt
+        positionsBufferRef.current.push({ t: elapsedRef.current, x: sphereBody.position.x, y: sphereBody.position.y })
         // Push shallow copy to trigger Recharts update
         setTrajectory([...positionsBufferRef.current])
       }
@@ -236,9 +239,29 @@ export default function ProjectileMotion() {
               </div>
               <Slider value={gravity} min={0} max={25} step={0.01} onChange={setGravity} />
 
-              <div className="pt-1">
+              <div className="pt-1 flex gap-2">
                 <Button type="button" onClick={resetAndLaunch} className="w-full">
                   Launch
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const header = "time,x,y\n"
+                    const rows = positionsBufferRef.current.map((p) => `${p.t.toFixed(4)},${p.x.toFixed(5)},${p.y.toFixed(5)}`).join("\n")
+                    const csv = header + rows
+                    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement("a")
+                    a.href = url
+                    a.download = "projectile_trajectory.csv"
+                    document.body.appendChild(a)
+                    a.click()
+                    a.remove()
+                    URL.revokeObjectURL(url)
+                  }}
+                >
+                  Export CSV
                 </Button>
               </div>
             </div>

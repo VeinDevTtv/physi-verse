@@ -5,7 +5,7 @@ export function Footer(): JSX.Element {
         <p>
           © {new Date().getFullYear()} PhysiVerse
         </p>
-        <p className="opacity-80">Built with Next.js & ShadCN</p>
+        <p className="opacity-80">Project By Abdelkarim Ait Bourich</p>
       </div>
     </footer>
   );

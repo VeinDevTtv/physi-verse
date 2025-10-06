@@ -3,10 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import QuizPlayer from "@/components/quiz/QuizPlayer"
 import { getQuiz } from "@/lib/server/quizStore"
 
-type Params = { params: { id: string } }
+type PageParams = Promise<{ id: string }>
 
-export default async function QuizPage({ params }: Params) {
-  const quiz = await getQuiz(params.id)
+export default async function QuizPage({ params }: { params: PageParams }) {
+  const { id } = await params
+  const quiz = await getQuiz(id)
   if (!quiz) return notFound()
   return (
     <div className="mx-auto max-w-4xl p-4 space-y-4">

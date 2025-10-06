@@ -165,7 +165,11 @@ export default function CreateQuizPage() {
                         onChange={(e) => {
                           const v = e.target.value
                           // allow temporary non-numeric, we evaluate on save
-                          updateQuestion(q.id, "expectedValue", (evaluateExpression(v) ?? Number(v) || 0) as any)
+                          updateQuestion(
+                            q.id,
+                            "expectedValue",
+                            ((evaluateExpression(v) ?? Number(v)) || 0) as any,
+                          )
                         }}
                       />
                       <Input
